@@ -1,0 +1,3 @@
+<!-- cspell:words pyinstaller -->
+
+SysAdmin Toolkit is free and open source software. The source code is available on [GitHub](https://github.com/BenjaminHamon/SysAdminToolkit), under the [MIT license](https://github.com/BenjaminHamon/SysAdminToolkit/blob/develop/License.txt).
