@@ -25,7 +25,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 
-dependencies = []
+dependencies = [
+    "benjaminhamon-standard-extensions ~= 1.0.1",
+]
 
 [project.optional-dependencies]
 all = [
