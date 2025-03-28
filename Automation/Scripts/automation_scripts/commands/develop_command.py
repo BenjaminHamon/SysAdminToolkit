@@ -29,13 +29,14 @@ class DevelopCommand(AutomationCommand):
         venv_directory = automation_configuration.python_development_configuration.venv_directory
         python_system_executable = python_helpers.resolve_system_python_executable()
         python_environment = PythonEnvironment(python_system_executable, venv_directory)
+        pip_configuration_file_path = automation_configuration.python_development_configuration.pip_configuration_file_path
 
         package_collection_for_pip: List[str] = []
         for package in automation_configuration.python_development_configuration.package_collection:
             package_collection_for_pip.append(package.path_to_sources + "[all,dev]")
 
         logger.info("Setting up python virtual environment (Path: %s)", venv_directory)
-        python_environment.setup_virtual_environment(simulate = simulate)
+        python_environment.setup_virtual_environment(pip_configuration_file_path = pip_configuration_file_path, simulate = simulate)
         python_environment.install_python_packages_for_development(package_collection_for_pip, simulate = simulate)
 
 

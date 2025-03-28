@@ -64,7 +64,8 @@ def load_python_development_configuration() -> PythonDevelopmentConfiguration:
                 identifier = "benjaminhamon-sysadmin-toolkit",
                 path_to_sources = os.path.join("Sources", "toolkit"),
                 path_to_tests = os.path.join("Tests", "toolkit")),
-        ]
+        ],
+        pip_configuration_file_path = "pip.conf",
     )
 
 
