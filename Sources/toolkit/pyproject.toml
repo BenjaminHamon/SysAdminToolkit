@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "benjaminhamon-standard-extensions ~= 1.0.1",
+    "benjaminhamon-standard-extensions[all] == 1.0.0+4848b843fa",
 ]
 
 [project.optional-dependencies]
