@@ -33,7 +33,15 @@ class MySqlAdministrationClient(DatabaseAdministrationClient):
         return "%s://***/%s" % (self.scheme, self._database_name)
 
 
-    async def export_database(self,
+    async def exists(self) -> bool:
+        raise NotImplementedError
+
+
+    async def is_initialized(self) -> bool:
+        raise NotImplementedError
+
+
+    async def export(self,
             output_directory: str, *, log_file_path: Optional[str] = None, simulate: bool = False) -> None:
 
         dump_file_name = "%s.dump.sql" % self._database_name
@@ -62,3 +70,7 @@ class MySqlAdministrationClient(DatabaseAdministrationClient):
             raw_logger.dispose()
 
         logger.debug("Output file path: '%s'", dump_file_path)
+
+
+    async def restore(self, source_directory: str, *, log_file_path: Optional[str] = None, simulate: bool = False) -> None:
+        raise NotImplementedError

@@ -32,7 +32,15 @@ class MongoDbAdministrationClient(DatabaseAdministrationClient):
         return "%s://***/%s" % (self.scheme, self._database_name)
 
 
-    async def export_database(self,
+    async def exists(self) -> bool:
+        raise NotImplementedError
+
+
+    async def is_initialized(self) -> bool:
+        raise NotImplementedError
+
+
+    async def export(self,
             output_directory: str, *, log_file_path: Optional[str] = None, simulate: bool = False) -> None:
 
         dump_command = ExecutableCommand(self.mongodump_executable)
@@ -58,3 +66,7 @@ class MongoDbAdministrationClient(DatabaseAdministrationClient):
             raw_logger.dispose()
 
         logger.debug("Output directory: '%s'", output_directory)
+
+
+    async def restore(self, source_directory: str, *, log_file_path: Optional[str] = None, simulate: bool = False) -> None:
+        raise NotImplementedError

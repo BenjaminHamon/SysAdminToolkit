@@ -56,20 +56,25 @@ class GiteaAdministrationClient:
             if await self.is_service_running():
                 raise RuntimeError("Gitea service should not be running")
 
+        database_dump_directory = os.path.join(intermediate_directory, "database")
+        database_backup_log_file_path = os.path.join(database_dump_directory, "database_backup.log")
+        data_source_directory = os.path.join(self._instance_path, "data")
+        data_copy_directory = os.path.join(intermediate_directory, "data")
+
+        if not os.path.exists(data_source_directory):
+            raise RuntimeError("Gitea data directory does not exist (Path: '%s')" % data_source_directory)
+        if not await self._database_administration_client.exists():
+            raise RuntimeError("Gitea database does not exist (URL: '%s')" % self._database_administration_client.get_public_url())
+
         if not simulate:
             if os.path.exists(intermediate_directory):
                 shutil.rmtree(intermediate_directory)
             os.makedirs(intermediate_directory, mode = 0o700)
 
-        database_dump_directory = os.path.join(intermediate_directory, "database")
-        database_dump_log_file_path = os.path.join(database_dump_directory, "database.dump.sql")
-        data_source_directory = os.path.join(self._instance_path, "data")
-        data_copy_directory = os.path.join(intermediate_directory, "data")
-
         try:
             logger.info("Dumping database ('%s' => '%s')", self._database_administration_client.get_public_url(), database_dump_directory)
-            await self._database_administration_client.export_database(
-                database_dump_directory, log_file_path = database_dump_log_file_path, simulate = simulate)
+            await self._database_administration_client.export(
+                database_dump_directory, log_file_path = database_backup_log_file_path, simulate = simulate)
 
             logger.info("Copying data files ('%s' => '%s')", data_source_directory, data_copy_directory)
             if not simulate:
@@ -78,6 +83,52 @@ class GiteaAdministrationClient:
             logger.info("Creating archive (FilePath: '%s')", archive_file_path)
             mapping_collection = self._map_files_for_archive(intermediate_directory)
             self._archive_operations.create(archive_file_path, mapping_collection, simulate = simulate)
+
+        finally:
+            if not simulate:
+                if os.path.exists(intermediate_directory):
+                    shutil.rmtree(intermediate_directory)
+
+
+    async def restore(self,
+            archive_file_path: str, intermediate_directory: str, *,
+            check_not_running: bool = True, simulate: bool = False) -> None:
+
+        logger.info("Restoring Gitea (Path: '%s')", self._instance_path)
+
+        if check_not_running:
+            if await self.is_service_running():
+                raise RuntimeError("Gitea service should not be running")
+
+        database_dump_directory = os.path.join(intermediate_directory, "database")
+        database_restore_log_file_path = os.path.join(intermediate_directory, "database_restore.log")
+        data_actual_directory = os.path.join(self._instance_path, "data")
+        data_intermediate_directory = os.path.join(intermediate_directory, "data")
+
+        if os.path.exists(data_actual_directory):
+            raise RuntimeError("Gitea data directory already exists (Path: '%s')" % data_actual_directory)
+        if not await self._database_administration_client.exists():
+            raise RuntimeError("Gitea database does not exist (URL: '%s')" % self._database_administration_client.get_public_url())
+        if await self._database_administration_client.is_initialized():
+            raise RuntimeError("Gitea database is already initialized (URL: '%s')" % self._database_administration_client.get_public_url())
+
+        if not simulate:
+            if os.path.exists(intermediate_directory):
+                shutil.rmtree(intermediate_directory)
+            os.makedirs(intermediate_directory, mode = 0o700)
+
+        try:
+            logger.info("Extracting archive (FilePath: '%s')", archive_file_path)
+            self._archive_operations.extract(archive_file_path, intermediate_directory, simulate = simulate)
+
+            logger.info("Moving data files ('%s' => '%s')", data_intermediate_directory, data_actual_directory)
+            if not simulate:
+                shutil.move(data_intermediate_directory, data_actual_directory + ".tmp")
+                os.rename(data_actual_directory + ".tmp", data_actual_directory)
+
+            logger.info("Restoring database ('%s' => '%s')", database_dump_directory, self._database_administration_client.get_public_url())
+            await self._database_administration_client.restore(
+                database_dump_directory, log_file_path = database_restore_log_file_path, simulate = simulate)
 
         finally:
             if not simulate:
