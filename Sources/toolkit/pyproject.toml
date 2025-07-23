@@ -1,4 +1,4 @@
-# cspell:words setuptools
+# cspell:words asyncio pylint pytest setuptools
 
 [build-system]
 requires = [ "setuptools >= 64" ]

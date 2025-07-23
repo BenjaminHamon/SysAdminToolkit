@@ -1,3 +1,5 @@
+# cspell:words mysqldump
+
 import logging
 import os
 import sys

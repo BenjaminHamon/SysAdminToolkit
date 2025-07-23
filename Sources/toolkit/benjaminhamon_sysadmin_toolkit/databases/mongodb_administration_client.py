@@ -1,3 +1,5 @@
+# cspell:words mongodump
+
 import logging
 import sys
 from typing import Optional

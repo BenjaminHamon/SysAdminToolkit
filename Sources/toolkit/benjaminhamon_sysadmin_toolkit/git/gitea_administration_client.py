@@ -1,3 +1,5 @@
+# cspell:words gitea
+
 import glob
 import logging
 import os
