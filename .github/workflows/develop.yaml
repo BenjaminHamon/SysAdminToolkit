@@ -1,5 +1,7 @@
 ---
 
+# cspell:words venv
+
 name: Development pipeline
 
 on:
