@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "benjaminhamon-standard-extensions[all] ~= 1.0.1",
+    "benjaminhamon-standard-extensions[all] ~= 2.0.1",
 ]
 
 [project.optional-dependencies]
@@ -36,9 +36,9 @@ all = [
 
 dev = [
     "mockito ~= 1.5.4",
-    "pylint ~= 3.3.7",
-    "pytest ~= 8.4.1",
-    "pytest-asyncio ~= 1.1.0",
+    "pylint ~= 3.3.8",
+    "pytest ~= 8.4.2",
+    "pytest-asyncio ~= 1.2.0",
     "pytest-json ~= 0.4.0",
 ]
 
