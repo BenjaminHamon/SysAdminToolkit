@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "benjaminhamon-sysadmin-toolkit"
 version = "2.0.0+development"
 description = "Toolkit for automating system administration tasks"
-requires-python = ">= 3.9"
+requires-python = ">= 3.11"
 
 authors = [
     { name = "Benjamin Hamon", email = "development@benjaminhamon.com" }
